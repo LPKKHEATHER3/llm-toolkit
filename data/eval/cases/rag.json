@@ -1,0 +1,77 @@
+[
+  {
+    "id": "rag-opened-electronics-window",
+    "suite": "rag",
+    "critical": true,
+    "input": "How long do I have to return opened electronics?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["14"]},
+      {"type": "grounded"},
+      {"type": "cites_doc", "doc": "returns"}
+    ]
+  },
+  {
+    "id": "rag-restocking-fee",
+    "suite": "rag",
+    "input": "Is there a restocking fee when I return an opened item that works?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["15%", "15 %", "15 percent"]},
+      {"type": "cites_doc", "doc": "returns"}
+    ]
+  },
+  {
+    "id": "rag-express-cost",
+    "suite": "rag",
+    "input": "How much does express delivery cost?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["120"]},
+      {"type": "cites_doc", "doc": "shipping"}
+    ]
+  },
+  {
+    "id": "rag-mouse-warranty",
+    "suite": "rag",
+    "input": "What is the warranty period for a mouse?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["24"]},
+      {"type": "cites_doc", "doc": "warranty"}
+    ]
+  },
+  {
+    "id": "rag-swollen-power-bank",
+    "suite": "rag",
+    "critical": true,
+    "input": "My power bank has swollen. Should I post it back for a warranty claim?",
+    "graders": [
+      {"type": "answer_matches", "pattern": "bring|store|in person|must not be (shipped|posted|sent)|do not (ship|post|send)|don't (ship|post|send)"},
+      {"type": "cites_doc", "doc": "warranty"}
+    ]
+  },
+  {
+    "id": "rag-point-value",
+    "suite": "rag",
+    "input": "How much is one loyalty point worth at checkout?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["0.25"]},
+      {"type": "cites_doc", "doc": "payments-and-loyalty"}
+    ]
+  },
+  {
+    "id": "rag-reservation-limit",
+    "suite": "rag",
+    "input": "Can a customer reserve 10 units of an item for store pickup?",
+    "graders": [
+      {"type": "answer_contains_any", "values": ["5", "five"]},
+      {"type": "cites_doc", "doc": "stock-and-reservations"}
+    ]
+  },
+  {
+    "id": "rag-not-in-corpus",
+    "suite": "rag",
+    "critical": true,
+    "input": "Do you ship orders to Japan?",
+    "graders": [
+      {"type": "abstains"}
+    ]
+  }
+]

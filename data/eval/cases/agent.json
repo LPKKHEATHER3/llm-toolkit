@@ -1,0 +1,89 @@
+[
+  {
+    "id": "stock-lookup-by-name",
+    "suite": "agent",
+    "input": "How many Wired Keyboards do we have in stock?",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "names": ["get_item", "list_items"]},
+      {"type": "answer_contains_any", "values": ["9"]}
+    ]
+  },
+  {
+    "id": "issue-stock-by-sku",
+    "suite": "agent",
+    "critical": true,
+    "input": "We just sold 2 packs of binder clips, SKU OSU-0001. Please record the sale.",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "name": "issue_stock", "args": {"sku": "OSU-0001", "quantity": 2}},
+      {"type": "stock_equals", "sku": "OSU-0001", "qty": 38},
+      {"type": "answer_contains_any", "values": ["38"]}
+    ]
+  },
+  {
+    "id": "issue-stock-insufficient",
+    "suite": "agent",
+    "critical": true,
+    "input": "Issue 10 USB-C Charger 20W (ELE-0002) for a school order.",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "stock_equals", "sku": "ELE-0002", "qty": 3},
+      {"type": "no_movements"},
+      {"type": "answer_contains_any", "values": ["3"]}
+    ]
+  },
+  {
+    "id": "issue-stock-needs-lookup",
+    "suite": "agent",
+    "input": "Three Graph Paper Pads arrived torn. Write them off as damaged.",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "name": "issue_stock", "args": {"sku": "STA-0001", "quantity": 3}},
+      {"type": "stock_equals", "sku": "STA-0001", "qty": 77}
+    ]
+  },
+  {
+    "id": "unknown-sku-is-reported",
+    "suite": "agent",
+    "critical": true,
+    "input": "Issue 1 unit of ELE-0099 for a sale.",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "no_movements"},
+      {"type": "answer_matches", "pattern": "not found|does ?n[o']t exist|could ?n[o']t find|can ?n[o']t find|no item|unknown|not exist"}
+    ]
+  },
+  {
+    "id": "low-stock-report",
+    "suite": "agent",
+    "input": "Which items are at or below their reorder level?",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "name": "list_items", "args": {"low_stock_only": true}},
+      {"type": "answer_mentions_all", "groups": [["ELE-0002", "USB-C"], ["ELE-0004", "Speaker"], ["STA-0002", "Fineliner"], ["OSU-0002", "Label Tape"]]}
+    ]
+  },
+  {
+    "id": "issue-then-undo",
+    "suite": "agent",
+    "critical": true,
+    "input": "Issue 5 Desk Lamp LED (ELE-0001) for a sale. The customer cancelled, so then undo that change.",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "name": "issue_stock", "args": {"sku": "ELE-0001", "quantity": 5}},
+      {"type": "tool_called", "name": "undo_last_change", "args": {"expected_label": "-5 ELE-0001"}},
+      {"type": "stock_equals", "sku": "ELE-0001", "qty": 12}
+    ]
+  },
+  {
+    "id": "policy-question-in-agent",
+    "suite": "agent",
+    "input": "A customer wants to return an opened keyboard 10 days after delivery. Is that allowed?",
+    "fixture": "inventory_default",
+    "graders": [
+      {"type": "tool_called", "name": "search_policies"},
+      {"type": "answer_contains_any", "values": ["14"]}
+    ]
+  }
+]

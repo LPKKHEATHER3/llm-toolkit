@@ -1,0 +1,6 @@
+{
+  "description": "USD per 1M tokens, used only when a provider does not report the cost itself. Check each provider's price page before relying on these; OpenRouter reports cost per request, so it needs no entry here.",
+  "models": {
+    "claude-opus-5-5": {"input_per_mtok": 4.0, "output_per_mtok": 20.0, "source": "Anthropic model table, cached 2026-11-03"}
+  }
+}
