@@ -369,11 +369,23 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self._send(200, target.read_bytes(), ctype)
 
 
+class ProxyServer(ThreadingHTTPServer):
+    """ThreadingHTTPServer with a listen backlog sized for bursts.
+
+    socketserver's default backlog is 5. Under a burst of simultaneous connections, Linux drops
+    the overflow from the accept queue even though the client already sees the connection as open,
+    so the client's request is answered with a reset instead of a status code.
+    """
+
+    request_queue_size = 128
+    daemon_threads = True
+
+
 def make_proxy(client: ChatClient, config: ProxyConfig | None = None) -> ThreadingHTTPServer:
     """Create (not start) the server. Binding to port 0 picks a free port; the allowlists default to
     that port on 127.0.0.1 and localhost."""
     config = config or ProxyConfig()
-    httpd = ThreadingHTTPServer((config.host, config.port), ProxyHandler)
+    httpd = ProxyServer((config.host, config.port), ProxyHandler)
     final = config.with_port(httpd.server_address[1])  # fills only the allowlists left empty
     handler = type(
         "BoundProxyHandler",
@@ -381,7 +393,6 @@ def make_proxy(client: ChatClient, config: ProxyConfig | None = None) -> Threadi
         {"config": final, "client": client, "counter": DailyCounter(final.daily_cap)},
     )
     httpd.RequestHandlerClass = handler
-    httpd.daemon_threads = True
     return httpd
 
 
